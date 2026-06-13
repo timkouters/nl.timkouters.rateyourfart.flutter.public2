@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Your Fart - Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 15px 40px;
+            margin: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .button.android {
+            background: linear-gradient(135deg, #3ddc84 0%, #07c160 100%);
+        }
+        
+        .button.ios {
+            background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
+        }
+        
+        .redirect-message {
+            display: none;
+            color: #27ae60;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+        
+        .choice-container {
+            display: none;
+        }
+        
+        .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">💨</div>
+        <h1>Rate Your Fart</h1>
+        <p class="subtitle">Download the app and start rating!</p>
+        
+        <!-- Loading message (shown initially) -->
+        <div id="loading">
+            <p>Detecting your device...</p>
+        </div>
+        
+        <!-- Redirect message (for Android/iOS) -->
+        <div class="redirect-message" id="redirectMessage">
+            <p>Redirecting you to the app store...</p>
+        </div>
+        
+        <!-- Choice buttons (for Windows/Desktop) -->
+        <div class="choice-container" id="choiceContainer">
+            <p style="margin-bottom: 20px; color: #7f8c8d;">Choose your platform:</p>
+            <a href="https://play.google.com/store/apps/details?id=nl.timkouters.rateyourfart" class="button android">
+                Download for Android
+            </a>
+            <a href="#" class="button ios" id="iosButton">
+                Download for iOS
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // OS Detection and Redirect Logic
+        function detectOS() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Android detection
+            if (/android/i.test(userAgent)) {
+                return 'Android';
+            }
+            
+            // iOS detection
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return 'iOS';
+            }
+            
+            // Windows, Mac, Linux, or other desktop OS
+            return 'Desktop';
+        }
+        
+        // Redirect function
+        function handleRedirect() {
+            const os = detectOS();
+            const loading = document.getElementById('loading');
+            const redirectMessage = document.getElementById('redirectMessage');
+            const choiceContainer = document.getElementById('choiceContainer');
+            
+            // Android Play Store link
+            const androidUrl = 'https://play.google.com/store/apps/details?id=nl.timkouters.rateyourfart';
+            
+            // iOS App Store link (TBD - update when available)
+            const iosUrl = '#'; // TODO: Replace with actual iOS App Store link
+            
+            loading.style.display = 'none';
+            
+            if (os === 'Android') {
+                // Redirect to Play Store
+                redirectMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = androidUrl;
+                }, 1500);
+            } else if (os === 'iOS') {
+                // Redirect to App Store (when available)
+                if (iosUrl !== '#') {
+                    redirectMessage.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = iosUrl;
+                    }, 1500);
+                } else {
+                    // Show choice if iOS link not available yet
+                    choiceContainer.style.display = 'block';
+                    document.getElementById('iosButton').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        alert('iOS version coming soon! Please check back later.');
+                    });
+                }
+            } else {
+                // Show choice buttons for Desktop/Windows
+                choiceContainer.style.display = 'block';
+                document.getElementById('iosButton').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('iOS version coming soon! Please check back later.');
+                });
+            }
+        }
+        
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', handleRedirect);
+    </script>
+</body>
+</html>
