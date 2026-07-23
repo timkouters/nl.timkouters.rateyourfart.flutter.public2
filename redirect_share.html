@@ -118,12 +118,12 @@
             <p>Detecting your device...</p>
         </div>
         
-        <!-- Redirect message (for Android/iOS) -->
+        <!-- Redirect message (for Android/iOS/Web) -->
         <div class="redirect-message" id="redirectMessage">
-            <p>Redirecting you to the app store...</p>
+            <p id="redirectText">Redirecting you to the app store...</p>
         </div>
         
-        <!-- Choice buttons (for Windows/Desktop) -->
+        <!-- Choice buttons (fallback - not used in current flow) -->
         <div class="choice-container" id="choiceContainer">
             <p style="margin-bottom: 20px; color: #7f8c8d;">Choose your platform:</p>
             <a href="https://play.google.com/store/apps/details?id=nl.timkouters.rateyourfart" class="button android">
@@ -145,13 +145,18 @@
                 return 'Android';
             }
             
-            // iOS detection
+            // iOS detection (iPhone, iPad, iPod, Mac with Safari)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
                 return 'iOS';
             }
             
-            // Windows, Mac, Linux, or other desktop OS
-            return 'Desktop';
+            // Mac detection (for iOS/Mac message)
+            if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(userAgent)) {
+                return 'iOS'; // Treat Mac as iOS for web-app install message
+            }
+            
+            // Windows, Linux, or other desktop/web OS
+            return 'Web';
         }
         
         // Redirect function
@@ -159,44 +164,38 @@
             const os = detectOS();
             const loading = document.getElementById('loading');
             const redirectMessage = document.getElementById('redirectMessage');
+            const redirectText = document.getElementById('redirectText');
             const choiceContainer = document.getElementById('choiceContainer');
             
             // Android Play Store link
             const androidUrl = 'https://play.google.com/store/apps/details?id=nl.timkouters.rateyourfart';
             
-            // iOS App Store link (TBD - update when available)
-            const iosUrl = '#'; // TODO: Replace with actual iOS App Store link
+            // Website URL for iOS and Web
+            const websiteUrl = 'https://rateyourfart.com';
             
             loading.style.display = 'none';
             
             if (os === 'Android') {
                 // Redirect to Play Store
+                redirectText.textContent = 'Redirecting you to the Play Store...';
                 redirectMessage.style.display = 'block';
                 setTimeout(() => {
                     window.location.href = androidUrl;
                 }, 1500);
             } else if (os === 'iOS') {
-                // Redirect to App Store (when available)
-                if (iosUrl !== '#') {
-                    redirectMessage.style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = iosUrl;
-                    }, 1500);
-                } else {
-                    // Show choice if iOS link not available yet
-                    choiceContainer.style.display = 'block';
-                    document.getElementById('iosButton').addEventListener('click', (e) => {
-                        e.preventDefault();
-                        alert('iOS version coming soon! Please check back later.');
-                    });
-                }
+                // Redirect to website with install message for iOS/Mac
+                redirectText.textContent = 'Redirecting you to rateyourfart.com... You can install the web-app on your iPhone or Mac when visiting the website!';
+                redirectMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = websiteUrl;
+                }, 2500);
             } else {
-                // Show choice buttons for Desktop/Windows
-                choiceContainer.style.display = 'block';
-                document.getElementById('iosButton').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    alert('iOS version coming soon! Please check back later.');
-                });
+                // Redirect to website for other web devices
+                redirectText.textContent = 'Redirecting you to rateyourfart.com...';
+                redirectMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = websiteUrl;
+                }, 1500);
             }
         }
         
